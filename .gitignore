@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Demo / eval artifacts
+demo_pipeline/
+demo_output/
+eval_output/
+
+# Heavy assets (kept locally, not in git)
+checkpoints/
+data/
+pretrained/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs / temp
+*.log
+*.tmp
+wandb/
+lightning_logs/

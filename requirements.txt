@@ -1,0 +1,10 @@
+# Full EmotiLip environment.
+# For a faster first setup, install requirements-core.txt only.
+
+-r requirements-core.txt
+-r requirements-eval.txt
+
+# Real EmoNet is not distributed on PyPI. Install separately when using
+# emotion_encoder.backend="emonet":
+#   git clone https://github.com/face-analysis/emonet
+#   pip install -e emonet

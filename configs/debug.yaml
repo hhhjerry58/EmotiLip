@@ -1,0 +1,78 @@
+# ============================================================
+# EmotiLip Debug Configuration
+# Tiny model + synthetic data for end-to-end pipeline checks.
+# ============================================================
+
+data:
+  train_manifest: "data/debug/train/manifest.json"
+  val_manifest: "data/debug/val/manifest.json"
+  test_manifest: "data/debug/test/manifest.json"
+  max_mel_len: 64
+  sample_rate: 16000
+  n_mels: 16
+  hop_length: 256
+  video_fps: 25
+  lip_size: 32
+  face_size: 64
+
+visual_encoder:
+  backend: "resnet3d"
+  output_dim: 32
+  base_channels: 8
+  checkpoint_path: null
+  freeze: false
+
+emotion_encoder:
+  backend: "standin"
+  n_expression: 8
+  embed_dim: 16
+  checkpoint_path: null
+
+prosody_predictor:
+  hidden_dim: 16
+  num_heads: 2
+  num_layers: 1
+  dropout: 0.0
+
+melgen:
+  mel_dim: 16
+  channels: 16
+  cond_dim: 32
+  emotion_dim: 16
+  num_layers: 2
+  timesteps: 8
+  schedule: "linear"
+  fusion_type: "film"
+
+vocoder:
+  mel_dim: 16
+  checkpoint_path: null
+
+load_vocoder: false
+
+speaker_dim: 8
+num_speakers: 4
+
+lambda_prosody: 1.0
+lambda_emotion_consistency: 0.1
+use_emotion: true
+use_prosody: true
+use_emotion_consistency: false
+
+emotion_consistency:
+  num_emotion_classes: 8
+  hidden_dim: 16
+  dropout: 0.0
+
+training:
+  batch_size: 2
+  epochs: 1
+  lr: 1.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 0.0
+  amp: false
+  num_workers: 0
+  val_num_workers: 0
+  seed: 42
+  output_dir: "checkpoints/debug"
+  log_interval: 1

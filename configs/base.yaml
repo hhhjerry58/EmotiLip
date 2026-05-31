@@ -1,0 +1,86 @@
+# ============================================================
+# EmotiLip Base Configuration
+# Stage 1: Baseline Lip-to-Speech (no emotion conditioning)
+# ============================================================
+
+# --- Data ---
+data:
+  train_manifest: "data/processed/train/manifest.json"
+  val_manifest: "data/processed/val/manifest.json"
+  test_manifest: "data/processed/test/manifest.json"
+  max_mel_len: 400          # max mel frames per sample
+  sample_rate: 16000
+  n_mels: 80
+  hop_length: 256
+  video_fps: 25
+  lip_size: 96
+  face_size: 256
+
+# --- Visual Encoder ---
+visual_encoder:
+  backend: "resnet3d"       # "resnet3d" or "avhubert"
+  output_dim: 512
+  base_channels: 64          # ResNet3D width; reduce only for debug configs
+  checkpoint_path: null     # path to AV-HuBERT checkpoint (for avhubert backend)
+  freeze: false             # freeze backbone (true for avhubert)
+
+# --- Emotion Encoder (frozen) ---
+emotion_encoder:
+  backend: "standin"        # "emonet" or "standin"
+  n_expression: 8
+  embed_dim: 256
+  checkpoint_path: null     # path to EmoNet checkpoint
+
+# --- Prosody Predictor ---
+prosody_predictor:
+  hidden_dim: 256
+  num_heads: 4
+  num_layers: 2
+  dropout: 0.1
+
+# --- MelGen (Diffusion Decoder) ---
+melgen:
+  mel_dim: 80
+  channels: 256
+  cond_dim: 512
+  emotion_dim: 256
+  num_layers: 20
+  timesteps: 1000
+  schedule: "linear"        # "linear" or "cosine"
+  fusion_type: "film"       # "film", "adain", or "cross_attention"
+
+# --- Vocoder ---
+vocoder:
+  mel_dim: 80
+  checkpoint_path: null     # path to HiFi-GAN checkpoint
+
+load_vocoder: false         # training does not need vocoder; inference loads lazily
+
+# --- Speaker ---
+speaker_dim: 256
+num_speakers: 60            # MEAD has 60 speakers
+
+# --- Loss weights ---
+lambda_prosody: 1.0
+lambda_emotion_consistency: 0.0
+use_emotion: false          # Stage 1: no face-emotion conditioning
+use_prosody: false          # Stage 1: no prosody predictor
+use_emotion_consistency: false
+
+emotion_consistency:
+  num_emotion_classes: 8
+  hidden_dim: 128
+  dropout: 0.1
+
+# --- Training ---
+training:
+  batch_size: 8
+  epochs: 100
+  lr: 2.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 0.01
+  amp: true                 # mixed precision
+  num_workers: 4
+  seed: 42
+  output_dir: "checkpoints/base"
+  log_interval: 50

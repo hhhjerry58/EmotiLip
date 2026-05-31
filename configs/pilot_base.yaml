@@ -1,0 +1,79 @@
+# ============================================================
+# EmotiLip Real-Data Pilot Baseline Configuration
+# Full MEAD tensor dimensions with a smaller model for quick pilots.
+# Stage 1: Baseline Lip-to-Speech (no emotion/prosody conditioning)
+# ============================================================
+
+data:
+  train_manifest: "data/processed/mead_pilot/train/manifest.json"
+  val_manifest: "data/processed/mead_pilot/val/manifest.json"
+  test_manifest: "data/processed/mead_pilot/test/manifest.json"
+  max_mel_len: 400
+  sample_rate: 16000
+  n_mels: 80
+  hop_length: 256
+  video_fps: 25
+  lip_size: 96
+  face_size: 256
+
+visual_encoder:
+  backend: "resnet3d"
+  output_dim: 128
+  base_channels: 16
+  checkpoint_path: null
+  freeze: false
+
+emotion_encoder:
+  backend: "standin"
+  n_expression: 8
+  embed_dim: 256
+  checkpoint_path: null
+
+prosody_predictor:
+  hidden_dim: 64
+  num_heads: 4
+  num_layers: 1
+  dropout: 0.1
+
+melgen:
+  mel_dim: 80
+  channels: 64
+  cond_dim: 128
+  emotion_dim: 256
+  num_layers: 8
+  timesteps: 100
+  schedule: "linear"
+  fusion_type: "film"
+
+vocoder:
+  mel_dim: 80
+  checkpoint_path: null
+
+load_vocoder: false
+
+speaker_dim: 64
+num_speakers: 60
+
+lambda_prosody: 0.0
+lambda_emotion_consistency: 0.0
+use_emotion: false
+use_prosody: false
+use_emotion_consistency: false
+
+emotion_consistency:
+  num_emotion_classes: 8
+  hidden_dim: 64
+  dropout: 0.1
+
+training:
+  batch_size: 4
+  epochs: 10
+  lr: 2.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 0.01
+  amp: true
+  num_workers: 2
+  val_num_workers: 0
+  seed: 42
+  output_dir: "checkpoints/pilot_base"
+  log_interval: 10

@@ -1,0 +1,76 @@
+# ============================================================
+# EmotiLip + Cross-Attention Emotion Conditioning
+# Ablation: Compare Cross-Attention vs FiLM vs AdaIN
+# ============================================================
+
+data:
+  train_manifest: "data/processed/train/manifest.json"
+  val_manifest: "data/processed/val/manifest.json"
+  test_manifest: "data/processed/test/manifest.json"
+  max_mel_len: 400
+  sample_rate: 16000
+  n_mels: 80
+  hop_length: 256
+  video_fps: 25
+  lip_size: 96
+  face_size: 256
+
+visual_encoder:
+  backend: "resnet3d"
+  output_dim: 512
+  base_channels: 64
+  checkpoint_path: null
+  freeze: false
+
+emotion_encoder:
+  backend: "standin"
+  n_expression: 8
+  embed_dim: 256
+  checkpoint_path: null
+
+prosody_predictor:
+  hidden_dim: 256
+  num_heads: 4
+  num_layers: 2
+  dropout: 0.1
+
+melgen:
+  mel_dim: 80
+  channels: 256
+  cond_dim: 512
+  emotion_dim: 256
+  num_layers: 20
+  timesteps: 1000
+  schedule: "linear"
+  fusion_type: "cross_attention"  # <-- Cross-Attention conditioning
+
+vocoder:
+  mel_dim: 80
+  checkpoint_path: null
+
+load_vocoder: false
+
+speaker_dim: 256
+num_speakers: 60
+lambda_prosody: 1.0
+lambda_emotion_consistency: 0.1
+use_emotion: true
+use_prosody: true
+use_emotion_consistency: false
+
+emotion_consistency:
+  num_emotion_classes: 8
+  hidden_dim: 128
+  dropout: 0.1
+
+training:
+  batch_size: 6              # slightly smaller due to cross-attn memory
+  epochs: 100
+  lr: 1.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 0.01
+  amp: true
+  num_workers: 4
+  seed: 42
+  output_dir: "checkpoints/emotion_crossattn"
+  log_interval: 50
