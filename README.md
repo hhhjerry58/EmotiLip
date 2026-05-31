@@ -1,6 +1,6 @@
 # EmotiLip
 
-Emotion-aware lip-to-speech course project framework.
+Our Deep Learning course project: an emotion-aware lip-to-speech framework.
 
 ## What Is Implemented
 
